@@ -16,3 +16,10 @@ docker network create --subnet 172.100.0.0/16 rwml-34fa-network
 # 4. Create the cluster
 echo "Creating the cluster..."
 KIND_EXPERIMENTAL_DOCKER_NETWORK=rwml-34fa-network kind create cluster --config ./kind-with-portmapping.yaml
+
+# install kafka 
+./install_kafka.sh
+
+# Install Kafka UI
+./install_kafka_ui.sh
+
