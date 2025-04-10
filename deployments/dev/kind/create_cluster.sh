@@ -18,8 +18,10 @@ echo "Creating the cluster..."
 KIND_EXPERIMENTAL_DOCKER_NETWORK=rwml-34fa-network kind create cluster --config ./kind-with-portmapping.yaml
 
 # install kafka 
+chmod +x ./install_kafka.sh
 ./install_kafka.sh
 
 # Install Kafka UI
+chmod +x ./install_kafka_ui.sh
 ./install_kafka_ui.sh
 
