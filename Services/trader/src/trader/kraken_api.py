@@ -9,6 +9,9 @@ class Trade(BaseModel):
     price:float
     quantity: float 
     timestamp:str 
+    
+    def to_dict(self) -> Dict:  
+        return self.model_dump()
 
 class KrakenAPI:
     URL ="wss://ws.kraken.com/v2"
@@ -38,7 +41,29 @@ class KrakenAPI:
         except json.JSONDecodeError as e:
                logger.error(f'error decoding json: {e}')
                return []
-        breakpoint()
+        try:
+            trade_data =data['data']
+        except KeyError as e:
+            logger.error(f'No data field found in the messaga {e}')
+            return[]
+        
+        # trades= []
+        # for trade in trade_data:
+        #     trades.append(
+        #         Trade(
+        #             product_id=trade['symbol'],
+        #             price=(trade['price']),
+        #             quantity=(trade['qty']),
+        #             timestamp=trade['timestamp']
+        #         )   
+        #     )
+        # using list comprehension
+        trades = [Trade(product_id=trade['symbol'],
+                        price=float(trade['price']),
+                        quantity=float(trade['qty']),
+                        timestamp=trade['timestamp'])
+                        for trade in trade_data]
+        return trades
     
     def _subscribe(self):
         """

@@ -1,6 +1,7 @@
 from quixstreams import Application
 from kraken_api import KrakenAPI , Trade
 from typing import Dict, List , Tuple 
+from loguru import logger
 
 
 
@@ -28,7 +29,7 @@ def run(
             for event in events:
                 message = topic.serialize(
                     # key=event["id"],
-                    value=event)
+                    value=event.to_dict())
 
                 # Produce a message into the Kafka topic
                 producer.produce(
@@ -36,7 +37,8 @@ def run(
                     value=message.value, 
                     # key=message.key
                 )
-                
+            logger.info(f'Produced messages to topic {topic.name}')
+            # breakpoint()
 
 
 if __name__ == "__main__":
