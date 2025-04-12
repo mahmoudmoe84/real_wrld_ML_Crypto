@@ -4,3 +4,4 @@
 mise trust
 mise install
 echo 'eval "$(/usr/local/bin/mise activate bash)"' >> ~/.bashrc
+source ~/.bashrc
