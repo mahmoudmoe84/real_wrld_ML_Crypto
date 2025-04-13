@@ -9,3 +9,6 @@ push:
 
 deploy: build push 
 	kubectl apply -f deployments/dev/trades/trades.yaml	
+
+lint:
+	ruff check . --fix
