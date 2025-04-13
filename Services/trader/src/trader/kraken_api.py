@@ -1,8 +1,9 @@
 import json
 from typing import Dict
+
+from loguru import logger
 from pydantic import BaseModel
 from websocket import create_connection
-from loguru import logger
 
 
 class Trade(BaseModel):
@@ -16,7 +17,7 @@ class Trade(BaseModel):
 
 
 class KrakenAPI:
-    URL = "wss://ws.kraken.com/v2"
+    URL = 'wss://ws.kraken.com/v2'
 
     def __init__(
         self,
@@ -33,18 +34,18 @@ class KrakenAPI:
     def get_trades(self) -> list[Trade]:
         data: str = self._ws_client.recv()
 
-        if "heartbeat" in data:
-            logger.info("heartbeat received")
+        if 'heartbeat' in data:
+            logger.info('heartbeat received')
             return []
         try:
             data = json.loads(data)
         except json.JSONDecodeError as e:
-            logger.error(f"error decoding json: {e}")
+            logger.error(f'error decoding json: {e}')
             return []
         try:
-            trade_data = data["data"]
+            trade_data = data['data']
         except KeyError as e:
-            logger.error(f"No data field found in the messaga {e}")
+            logger.error(f'No data field found in the messaga {e}')
             return []
 
         # trades= []
@@ -60,10 +61,10 @@ class KrakenAPI:
         # using list comprehension
         trades = [
             Trade(
-                product_id=trade["symbol"],
-                price=float(trade["price"]),
-                quantity=float(trade["qty"]),
-                timestamp=trade["timestamp"],
+                product_id=trade['symbol'],
+                price=float(trade['price']),
+                quantity=float(trade['qty']),
+                timestamp=trade['timestamp'],
             )
             for trade in trade_data
         ]
@@ -77,11 +78,11 @@ class KrakenAPI:
         self._ws_client.send(
             json.dumps(
                 {
-                    "method": "subscribe",
-                    "params": {
-                        "channel": "trade",
-                        "symbol": self.product_id,
-                        "snapshot": False,
+                    'method': 'subscribe',
+                    'params': {
+                        'channel': 'trade',
+                        'symbol': self.product_id,
+                        'snapshot': False,
                     },
                 }
             )
