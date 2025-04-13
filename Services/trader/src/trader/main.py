@@ -2,7 +2,7 @@ from quixstreams import Application
 from kraken_api import KrakenAPI , Trade
 from typing import Dict, List , Tuple 
 from loguru import logger
-import time.config import config
+from trader.config import config
 
 
 def run(
@@ -37,8 +37,9 @@ def run(
                     value=message.value, 
                     # key=message.key
                 )
-            logger.info(f'Produced messages to topic {topic.name}')
-            # breakpoint()
+                logger.info(f'Produced messages to topic {topic.name}')
+                # breakpoint()
+                logger.info(f'Trade {event.to_dict()} push to Kafka')
 
 
 if __name__ == "__main__":
