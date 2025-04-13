@@ -32,3 +32,6 @@ ENTRYPOINT []
 # Uses `fastapi dev` to enable hot-reloading when the `watch` sync occurs
 # Uses `--host 0.0.0.0` to allow access from outside the container
 CMD ["uv","run","Services/trader/src/trader/main.py"]
+
+#this is to debug the container
+# CMD ["/bin/bash","-c","sleep 999999"]
