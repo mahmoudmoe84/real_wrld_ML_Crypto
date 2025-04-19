@@ -13,7 +13,10 @@ dependencies = [
 ]
 
 [tool.uv.workspace]
-members = ["Services/trader"]
+members = [
+    "Services/trader",
+ "Services/candles",
+]
 
 [tool.uv.sources]
 trader = { workspace = true }
