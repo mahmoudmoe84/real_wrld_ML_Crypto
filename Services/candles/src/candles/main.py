@@ -1,12 +1,15 @@
+from datetime import timedelta
+
 from loguru import logger
 from quixstreams import Application
-from datetime import timedelta
+
 from candles.config import config
+
 
 def init_candle(trade: dict) -> dict:
     """
     Initialize the candle with first trade
-    """ 
+    """
     return {
         'open': trade['price'],
         'high': trade['price'],
@@ -19,22 +22,22 @@ def init_candle(trade: dict) -> dict:
 
 def update_candle(candle:dict, trade:dict) -> dict:
     """
-    takes the cyrrent candle state and the new trade and updates the candle  
-    
+    takes the cyrrent candle state and the new trade and updates the candle
+
     Args
     candle (dict)-- the current candle state
     trade (dict) -- the new trade
     Return
         Dict: the updated candle
     """
-    
+
     # update open price if it is the first message
     # update high and low prices
     candle['high'] = max(candle['high'], trade['price'])
     candle['low'] = min(candle['low'], trade['price'])
     # update close price
     candle['close'] = trade['price']
-    
+
     # update volume and count
     candle['volume'] += trade['quantity']
     return candle
@@ -47,7 +50,7 @@ def run(
     kafka_output_topic: str,
     # candles parameters
     candles_seconds: int,
-    emit_intermediate_candle: bool = True,   
+    emit_intermediate_candle: bool = True,
 ):
     """
     Transforms the input stream in candles streams
@@ -85,10 +88,10 @@ def run(
     # if emit_intermediate_candle:
         # emit intermediate candles to make system more responsive
     sdf = sdf.current()
-    # else: 
+    # else:
     #     # emit only final candles
     #     sdf =sdf.final()
-    
+
     sdf['open'] = sdf['value']['open']
     sdf['high'] = sdf['value']['high']
     sdf['low'] = sdf['value']['low']
@@ -96,18 +99,18 @@ def run(
     # sdf['timestamp_ms'] = sdf['timestamp']
     sdf['pair'] = sdf['value']['pair']
     sdf['volume'] = sdf['value']['volume']
-    
+
     #extract window stafrt and end
     sdf['window_start_ms'] = sdf['start']
     sdf['window_end_ms'] = sdf['end']
-    
+
     #keep only relevant columns
     sdf =sdf[['pair', 'open', 'high', 'low', 'close', 'volume', 'window_start_ms', 'window_end_ms']]
-    
+
     sdf['candle_seconds'] = candles_seconds
     #logging to the console
     sdf.update(lambda value: logger.debug(f'Candle: {value}'))
-    
+
     # step 3: produce the candles to the output kafka topic
     # produce update to the output topic
     sdf = sdf.to_topic(candle_topic)
