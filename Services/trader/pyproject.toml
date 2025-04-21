@@ -1,0 +1,17 @@
+[project]
+name = "trader"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "mahmoudmoe84", email = "mahmoud.moawed@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic-settings>=2.8.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+

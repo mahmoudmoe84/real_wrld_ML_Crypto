@@ -1,7 +1,7 @@
 from loguru import logger
 from quixstreams import Application
 from datetime import timedelta
-
+from candles.config import config
 
 def init_candle(trade: dict) -> dict:
     """
@@ -117,8 +117,8 @@ def run(
 
 if __name__ == '__main__':
     run(
-        kafka_broker_address='localhost:31234',
-        kafka_input_input_topic='trades',
-        kafka_output_topic='candles',
-        candles_seconds=60,
+        kafka_broker_address=config.kafka_broker_address,
+        kafka_input_input_topic=config.kafka_input_topic,
+        kafka_output_topic=config.kafka_output_topic,
+        candles_seconds=config.candles_seconds,
     )
