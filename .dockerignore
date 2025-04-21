@@ -1,0 +1,22 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+.env
+*.log
+
+# Ignore Git
+.git/
+.gitignore
+
+# Ignore VSCode or other editors
+.vscode/
+.idea/
+
+# NodeJS or frontend stuff
+node_modules/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
