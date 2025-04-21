@@ -12,7 +12,7 @@ def init_candle(trade: dict) -> dict:
         'high': trade['price'],
         'low': trade['price'],
         'close': trade['price'],
-        'timestamp_ms': trade['timestamp'],
+        # 'timestamp_ms': trade['timestamp'],
         'pair': trade['product_id'],
         'volume': trade['quantity'],
     }
@@ -88,13 +88,32 @@ def run(
     # else: 
     #     # emit only final candles
     #     sdf =sdf.final()
+    
+    sdf['open'] = sdf['value']['open']
+    sdf['high'] = sdf['value']['high']
+    sdf['low'] = sdf['value']['low']
+    sdf['close'] = sdf['value']['close']
+    # sdf['timestamp_ms'] = sdf['timestamp']
+    sdf['pair'] = sdf['value']['pair']
+    sdf['volume'] = sdf['value']['volume']
+    
+    #extract window stafrt and end
+    sdf['window_start_ms'] = sdf['start']
+    sdf['window_end_ms'] = sdf['end']
+    
+    #keep only relevant columns
+    sdf =sdf[['pair', 'open', 'high', 'low', 'close', 'volume', 'window_start_ms', 'window_end_ms']]
+    
+    sdf['candle_seconds'] = candles_seconds
+    #logging to the console
+    sdf.update(lambda value: logger.debug(f'Candle: {value}'))
+    
     # step 3: produce the candles to the output kafka topic
     # produce update to the output topic
     sdf = sdf.to_topic(candle_topic)
 
     # run the streaming application
     app.run()
-
 
 if __name__ == '__main__':
     run(
