@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     kafka_input_topic:str
     kafka_output_topic: str
     candles_seconds: int
+    kafka_consumer_group: str
 
 
 config = Settings()

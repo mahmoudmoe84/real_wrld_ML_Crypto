@@ -50,6 +50,7 @@ def run(
     kafka_output_topic: str,
     # candles parameters
     candles_seconds: int,
+    kafka_consumer_group: str,
     emit_intermediate_candle: bool = True,
 ):
     """
@@ -67,7 +68,8 @@ def run(
     Return: None
     """
 
-    app = Application(broker_address=kafka_broker_address)
+    app = Application(broker_address=kafka_broker_address,
+                      consumer_group=kafka_consumer_group)
     # input topic
     trade_topic = app.topic(name=kafka_input_input_topic, value_deserializer='json')
     # output topic
@@ -124,4 +126,6 @@ if __name__ == '__main__':
         kafka_input_input_topic=config.kafka_input_topic,
         kafka_output_topic=config.kafka_output_topic,
         candles_seconds=config.candles_seconds,
+        kafka_consumer_group=config.kafka_consumer_group
+
     )
