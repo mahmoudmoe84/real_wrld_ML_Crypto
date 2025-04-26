@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: trades
-        image: docker.io/library/trades:dev
+        image: docker pull ghcr.io/mahmoudmoe84/trades:0.1.3-beta.1745656056
         imagePullPolicy: Never # Use the local image
         env:
         - name: KAFKA_BROKER_ADDRESS

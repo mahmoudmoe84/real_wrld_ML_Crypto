@@ -7,10 +7,10 @@ dev:
 build-for-dev:
 	docker build -t ${service}:dev -f docker/${service}.dockerfile .
 
-push-for: 
+push-for-dev: 
 	kind load docker-image ${service}:dev --name rwml-34fa
 
-deploy-for-dev: build push 
+deploy-for-dev: build-for-dev push-for-dev 
 	kubectl delete -f deployments/dev/${service}/${service}.yaml --ignore-not-found=true
 	kubectl apply -f deployments/dev/${service}/${service}.yaml	
 
@@ -25,10 +25,6 @@ deploy-for-prod:
 	kubectl apply -f deployments/prod/${service}/${service}.yaml
 	
 #####################################################
-
-
-
-
 
 lint:
 	ruff check . --fix --no-cache --unsafe-fixes
