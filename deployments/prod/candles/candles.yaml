@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: candles
+  namespace: rwml-prod
+  labels:
+    app: candles
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: candles
+  template:
+    metadata:
+      labels:
+        app: candles
+    spec:
+      containers:
+      - name: candles
+        image: ghcr.io/mahmoudmoe84/candles:0.1.3-beta.1745600854@sha256:ad3d1ae2d09e7c5a299db06d006cf8cfcdba1903d0f196b84724fe2f1e4f4a80
+        imagePullPolicy: Always # Use the local image
+        env:
+        - name: KAFKA_BROKER_ADDRESS
+          value: kafka-e11b-kafka-bootstrap.kafka.svc.cluster.local:9092
+        - name: KAFKA_TOPIC
+          value: "candles"
+        - name: KAFKA_INPUT_TOPIC
+          value: "trades"
+        - name: KAFKA_OUTPUT_TOPIC
+          value: "candles"
+        - name: CANDLES_SECONDS
+          value: "60"
+        - name: KAFKA_CONSUMER_GROUP
+          value: "candles_consumer_group"

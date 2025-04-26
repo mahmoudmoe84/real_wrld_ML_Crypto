@@ -2,10 +2,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Settings for the technical_indicators service."""
+    """Settings for the Trades service."""
 
     model_config = SettingsConfigDict(
-        env_file='Services/candles/settings.env', env_file_encoding='utf-8')
+        env_file='Services/technical_indicators/settings.env', env_file_encoding='utf-8')
 
     kafka_broker_address: str
     kafka_input_topic:str
