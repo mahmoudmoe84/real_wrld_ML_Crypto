@@ -25,6 +25,5 @@ deploy-for-prod:
 	kubectl apply -f deployments/prod/${service}/${service}.yaml
 	
 #####################################################
-
 lint:
 	ruff check . --fix --no-cache --unsafe-fixes
