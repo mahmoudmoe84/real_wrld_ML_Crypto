@@ -1,16 +1,11 @@
-from calendar import c
-from datetime import timedelta
-from math import e
 
 # import candles
 from loguru import logger
-from quixstreams import Application , State
+from quixstreams import Application
 
-from technical_indicators.config import config
 from technical_indicators.candle import update_candles_in_state
+from technical_indicators.config import config
 from technical_indicators.indicator import compute_technical_indicators
-
-
 
 
 def run(
@@ -47,24 +42,24 @@ def run(
     # step 1: ingest trade from the input kafka topic for the given candles seconds
     # create streaming datafram
     sdf = app.dataframe(topic=candles_topic)
-    
+
     # Step 2: Filter the candles by the given candles seconds
     sdf =sdf[sdf['candle_seconds'] == candles_seconds]
     # keep only candles with the given candles seconds
 
     # step 3: Add candles to the state dictionary
     ##TODO:
-    
-    # Apply a custom function and inform StreamingDataFrame 
+
+    # Apply a custom function and inform StreamingDataFrame
     # to provide a State instance to it using "stateful=True"
     sdf = sdf.apply(update_candles_in_state, stateful=True)
 
     # sdf = sdf.update(lambda value: logger.debug(f'Updated candle: {value}'))
     # sdf = sdf.update(lambda _: breakpoint())
     # Step 4 : compute the technical indicators from the candles in the state dictionary
-    
+
     sdf = sdf.apply(compute_technical_indicators, stateful=True)
-    
+
     #logging to the console
     sdf = sdf.update(lambda value: logger.debug(f'Final Message: {value}'))
 

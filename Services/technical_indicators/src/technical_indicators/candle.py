@@ -1,5 +1,7 @@
-from quixstreams import State 
+from quixstreams import State
+
 from .config import config
+
 
 def are_same_window(candle:dict, previous_candle:dict) -> bool:
     """
@@ -40,14 +42,14 @@ def update_candles_in_state(candle: dict, state: State):
         #replace the last candle in state
         candles[-1] = candle
     else:
-        
+
         # add the new candle to the state
         candles.append(candle)
-    
+
     if len(candles) >config.max_candles_in_state:
         # remove the oldest candle
         candles.pop(0)
-    
+
     state.set('candles', candles)
     return candle
     # total += 1
