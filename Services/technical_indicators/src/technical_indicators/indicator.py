@@ -36,7 +36,25 @@ def compute_technical_indicators(
     indicators['sma_14'] = stream.SMA(close,timeperiod=14)
     indicators['sma_21'] = stream.SMA(close,timeperiod=21)
     indicators['sma_60'] = stream.SMA(close,timeperiod=60)
+    
+    #EXPONENTIAL MOVING AVERAGE
+    indicators['ema_7'] = stream.EMA(close,timeperiod=7)
+    indicators['ema_14'] = stream.EMA(close,timeperiod=14)
+    indicators['ema_21'] = stream.EMA(close,timeperiod=21)
+    indicators['ema_60'] = stream.EMA(close,timeperiod=60)    
 
+    # Realative Strength Index
+    indicators['rsi_7'] = stream.RSI(close,timeperiod=7)
+    indicators['rsi_14'] = stream.RSI(close,timeperiod=14)
+    indicators['rsi_21'] = stream.RSI(close,timeperiod=21)
+    indicators['rsi_60'] = stream.RSI(close,timeperiod=60)
+    
+    #Moving Average Convergence Divergence
+    indicators['macd_7'], indicators['macd_7_signal'], indicators['macd_7_hist'] = stream.MACD(
+        close,fastperiod=7,slowperiod=14,signalperiod=9)  
+    
+    #on balance volume
+    indicators['obv'] = stream.OBV(close, volume) 
     return {**indicators,**candle} # type: ignore
     # breakpoint()
     # get the candles from the state dictionary

@@ -26,4 +26,4 @@ deploy-for-prod:
 	
 #####################################################
 lint:
-	ruff check . --fix --no-cache --unsafe-fixes
+	ruff check . --fix --no-cache
