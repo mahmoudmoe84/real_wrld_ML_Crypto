@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     kafka_output_topic: str
     candles_seconds: int
     kafka_consumer_group: str
+    max_candles_in_state: int
 
 
 config = Settings()
