@@ -1,7 +1,7 @@
 import numpy as np
 from loguru import logger
 from talib import stream
-
+from technical_indicators.config import indicator_config
 
 def compute_technical_indicators(
     candle: dict,
@@ -34,26 +34,23 @@ def compute_technical_indicators(
 
     indicators = {}
     # Calculate SMA for different periods
-    indicators['sma_7'] = stream.SMA(close,timeperiod=7)
-    indicators['sma_14'] = stream.SMA(close,timeperiod=14)
-    indicators['sma_21'] = stream.SMA(close,timeperiod=21)
-    indicators['sma_60'] = stream.SMA(close,timeperiod=60)
+    for period in indicator_config.sma:
+        indicators[f'sma_{period}'] = stream.SMA(close, timeperiod=period)
+
 
     #EXPONENTIAL MOVING AVERAGE
-    indicators['ema_7'] = stream.EMA(close,timeperiod=7)
-    indicators['ema_14'] = stream.EMA(close,timeperiod=14)
-    indicators['ema_21'] = stream.EMA(close,timeperiod=21)
-    indicators['ema_60'] = stream.EMA(close,timeperiod=60)
+    for period in indicator_config.ema:
+        indicators[f'ema_{period}'] = stream.EMA(close, timeperiod=period)
 
     # Realative Strength Index
-    indicators['rsi_7'] = stream.RSI(close,timeperiod=7)
-    indicators['rsi_14'] = stream.RSI(close,timeperiod=14)
-    indicators['rsi_21'] = stream.RSI(close,timeperiod=21)
-    indicators['rsi_60'] = stream.RSI(close,timeperiod=60)
+    for period in indicator_config.rsi:
+        indicators[f'rsi_{period}'] = stream.RSI(close, timeperiod=period)
 
     #Moving Average Convergence Divergence
     indicators['macd_7'], indicators['macd_7_signal'], indicators['macd_7_hist'] = stream.MACD(
-        close,fastperiod=7,slowperiod=14,signalperiod=9)
+        close,fastperiod=indicator_config.macd['fastperiod'],
+        slowperiod=indicator_config.macd['slowperiod'],
+        signalperiod=indicator_config.macd['signalperiod'])
 
     #on balance volume
     indicators['obv'] = stream.OBV(close, volume)

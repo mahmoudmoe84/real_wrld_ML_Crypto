@@ -1,0 +1,11 @@
+technical_indicators:
+  sma: [7,14,21,60]
+  
+  ema: [7,14,21,60]
+  
+  rsi: [7,14,21,60]
+
+  macd:
+    fastperiod: 7
+    slowperiod: 14
+    signalperiod: 9

@@ -7,6 +7,9 @@ dev:
 build-for-dev:
 	docker build -t ${service}:dev -f docker/${service}.dockerfile .
 
+run: build-for-dev
+	docker run -t ${service}:dev
+
 push-for-dev: 
 	kind load docker-image ${service}:dev --name rwml-34fa
 
