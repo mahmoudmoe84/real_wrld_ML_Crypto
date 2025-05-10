@@ -21,7 +21,7 @@ deploy-for-dev: build-for-dev push-for-dev
 #Production
 #####################################################
 build-and-push-for-prod:
-	docker buildx build --platform linux/arm64,linux/amd64 -t ghcr.io/mahmoudmoe84/${service}:0.1.4-beta.$(shell date +%s) -f docker/${service}.dockerfile . --push
+	docker buildx build --platform linux/arm64,linux/amd64 -t ghcr.io/mahmoudmoe84/${service}:0.1.6-beta.$(shell date +%s) -f docker/${service}.dockerfile . --push
 
 deploy-for-prod:
 	kubectl delete -f deployments/prod/${service}/${service}.yaml --ignore-not-found=true

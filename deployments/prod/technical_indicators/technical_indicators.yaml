@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: technical-indicators
+  namespace: rwml-prod
   labels:
     app: technical-indicators
 spec:
@@ -16,7 +17,7 @@ spec:
     spec:
       containers:
       - name: technical-indicators
-        image: technical_indicators:dev
+        image: ghcr.io/mahmoudmoe84/technical_indicators:0.1.6-beta.1746851594@sha256:b8e7c4f7a62e0f4c7af45d795c0353a7e5795c0fef5023bf59f60688425e2125
         imagePullPolicy: Always # Use the local image
         env:
         - name: KAFKA_BROKER_ADDRESS
@@ -26,6 +27,6 @@ spec:
         - name: KAFKA_OUTPUT_TOPIC
           value: "technical_indicators"
         - name: KAFKA_CONSUMER_GROUP
-          value: "technical_indicators_group"
+          value: "technical_indicators_consumer_group_2"
         - name: CANDLE_SECONDS
           value: "60"
