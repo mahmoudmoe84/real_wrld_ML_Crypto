@@ -71,6 +71,15 @@ def run(
     app.run()
 
 if __name__ == '__main__':
+    
+    # from technical_indicators.table import create_table_in_risingwave
+    # # create the table in the database
+    # create_table_in_risingwave(
+    #     table_name=config.table_name_in_risingwave,
+    #     kafka_broker_address=config.kafka_broker_address,
+    #     kafka_topic=config.kafka_output_topic,
+    #     ##TODO: add the database connection parameters
+    # )
     run(
         kafka_broker_address=config.kafka_broker_address,
         kafka_input_input_topic=config.kafka_input_topic,

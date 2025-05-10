@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     candles_seconds: int
     kafka_consumer_group: str
     max_candles_in_state: int
+    table_name_in_risingwave: str
+    
     
 
 class IndicatorsSettings(BaseSettings):
