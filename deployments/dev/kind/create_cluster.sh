@@ -25,3 +25,10 @@ chmod +x ./install_kafka.sh
 chmod +x ./install_kafka_ui.sh
 ./install_kafka_ui.sh
 
+# Install RisingWave
+chmod +x ./install_risingwave.sh
+./install_risingwave.sh
+
+# Install Grafana
+chmod +x ./install_grafana.sh
+./install_grafana.sh
