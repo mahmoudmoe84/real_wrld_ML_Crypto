@@ -87,6 +87,10 @@ ingress:
 
 persistence:
   enabled: true
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
 
 testFramework:
   enabled: false

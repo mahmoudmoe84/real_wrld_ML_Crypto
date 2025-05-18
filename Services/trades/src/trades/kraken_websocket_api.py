@@ -4,19 +4,19 @@ from typing import Dict
 from loguru import logger
 from pydantic import BaseModel
 from websocket import create_connection
+from trades.trade import Trade
+
+# class Trade(BaseModel):
+#     product_id: str
+#     price: float
+#     quantity: float
+#     timestamp: str
+
+#     def to_dict(self) -> Dict:
+#         return self.model_dump()
 
 
-class Trade(BaseModel):
-    product_id: str
-    price: float
-    quantity: float
-    timestamp: str
-
-    def to_dict(self) -> Dict:
-        return self.model_dump()
-
-
-class KrakenAPI:
+class KrakenWebsocketAPI:
     URL = 'wss://ws.kraken.com/v2'
 
     def __init__(
@@ -93,3 +93,6 @@ class KrakenAPI:
             _ = self._ws_client.recv()
 
         # breakpoint()
+    def is_done(self) -> bool:  
+        """returns True if the websocket is done"""
+        return False
