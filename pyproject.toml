@@ -12,10 +12,14 @@ dependencies = [
     "quixstreams>=3.13.1",
     "requests>=2.32.3",
     "ruff>=0.11.8",
-    "ta-lib>=0.6.3",
     "technical-indicators",
     "trades",
     "websocket-client>=1.8.0",
+]
+
+[project.optional-dependencies]
+talib = [
+    "ta-lib>=0.6.3",
 ]
 
 [tool.uv.workspace]

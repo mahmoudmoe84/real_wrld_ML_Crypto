@@ -16,6 +16,13 @@ env:
   GF_SERVER_ROOT_URL: http://grafana.local.dev
   GF_LOG_LEVEL: debug
   GF_LOG.CONSOLE_LEVEL: debug
+  # Existing settings for data paths
+  GF_PATHS_DATA: /var/lib/grafana/data
+  GF_PATHS_LOGS: /var/log/grafana
+  GF_PATHS_PLUGINS: /var/lib/grafana/plugins
+  GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+  # Add this for database recovery
+  GF_DATABASE_WAL: "true"
 
 adminUser: admin
 adminPassword: grafana
@@ -31,6 +38,17 @@ grafana.ini:
     enabled: false
   news:
     news_feed_enabled: false
+  # Existing settings for paths
+  paths:
+    data: /var/lib/grafana/data
+    logs: /var/log/grafana
+    plugins: /var/lib/grafana/plugins
+    provisioning: /etc/grafana/provisioning
+  server:
+    http_port: 3000
+  # Important for preventing database corruption
+  database:
+    wal: true
 
 dashboardProviders:
   dashboardproviders.yaml:
@@ -85,12 +103,75 @@ serviceMonitor:
 ingress:
   enabled: false
 
+# Change this section to enable persistence
 persistence:
-  enabled: true
+  enabled: true  # Changed from false to true
+  # Remove the emptyDir type
+  # type: emptyDir
+  # Enable these settings for PVC
   storageClassName: standard
   accessModes:
     - ReadWriteOnce
   size: 1Gi
+  # Add annotation to prevent deletion during upgrades
+  annotations:
+    "helm.sh/resource-policy": keep
+
+# Add an init container to fix permissions issues
+initContainers:
+  - name: init-chmod-data
+    image: busybox:1.34
+    command: ["sh", "-c", "mkdir -p /var/lib/grafana/data && chmod -R 777 /var/lib/grafana/data"]
+    volumeMounts:
+      - name: storage
+        mountPath: /var/lib/grafana/data
+
+# Add a lifecycle hook to clean up stale database locks
+lifecycle:
+  postStart:
+    exec:
+      command: ["/bin/sh", "-c", "find /var/lib/grafana/data -name '*.db-wal' -delete || true"]
+
+# Keep your existing resource limits
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Extend your existing probe timeouts to give Grafana more time to recover
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 60  # Increased from 30
+  timeoutSeconds: 10       # Increased from 5
+  periodSeconds: 15        # Increased from 10
+  failureThreshold: 5      # Increased from 3
+
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 90  # Increased from 60
+  timeoutSeconds: 10       # Increased from 5
+  periodSeconds: 15        # Increased from 10
+  failureThreshold: 5      # Increased from 3
+
+# Add a startup probe to give more time for initial startup
+startupProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 30
+  timeoutSeconds: 10
+  periodSeconds: 15
+  failureThreshold: 10
+
+# Extended grace period
+terminationGracePeriodSeconds: 60  # Increased from 30
 
 testFramework:
   enabled: false
