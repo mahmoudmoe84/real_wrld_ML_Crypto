@@ -1,9 +1,8 @@
 import json
-from typing import Dict
 
 from loguru import logger
-from pydantic import BaseModel
 from websocket import create_connection
+
 from trades.trade import Trade
 
 # class Trade(BaseModel):
@@ -93,6 +92,6 @@ class KrakenWebsocketAPI:
             _ = self._ws_client.recv()
 
         # breakpoint()
-    def is_done(self) -> bool:  
+    def is_done(self) -> bool:
         """returns True if the websocket is done"""
         return False

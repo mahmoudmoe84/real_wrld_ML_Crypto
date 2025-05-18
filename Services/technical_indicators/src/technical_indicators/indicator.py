@@ -1,7 +1,9 @@
 import numpy as np
 from loguru import logger
 from talib import stream
+
 from technical_indicators.config import indicator_config
+
 
 def compute_technical_indicators(
     candle: dict,

@@ -71,7 +71,7 @@ def run(
     app.run()
 
 if __name__ == '__main__':
-    
+
     # from technical_indicators.table import create_table_in_risingwave
     # # create the table in the database
     # create_table_in_risingwave(

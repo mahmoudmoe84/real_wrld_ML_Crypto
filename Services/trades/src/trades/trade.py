@@ -1,6 +1,8 @@
-from pydantic import BaseModel
-from typing import Dict
 import datetime
+from typing import Dict
+
+from pydantic import BaseModel
+
 
 class Trade(BaseModel):
     product_id: str
@@ -12,7 +14,7 @@ class Trade(BaseModel):
 
     def to_dict(self) -> Dict:
         return self.model_dump()
-    
+
     @staticmethod
     def unix_seconds_to_iso_format(timestamp_sec: float) -> str:
         """Convert a timestamp in seconds to ISO format.
@@ -25,7 +27,7 @@ class Trade(BaseModel):
         """
         dt = datetime.datetime.fromtimestamp(timestamp_sec, tz=datetime.timezone.utc)
         return dt.isoformat().replace("+00:00", "Z")
-    
+
     @classmethod
     def from_kraken_api_response(cls,
                                  product_id:str,

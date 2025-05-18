@@ -1,13 +1,12 @@
-from math import log
-from trades.kraken_websocket_api import KrakenWebsocketAPI, Trade
-from trades.kraken_rest_api import KrakenRestAPI
-from trades.trade import Trade
-import json
-from loguru import logger
-from quixstreams import Application
 from typing import Union
 
+from loguru import logger
+from quixstreams import Application
+
 from trades.config import config
+from trades.kraken_rest_api import KrakenRestAPI
+from trades.kraken_websocket_api import KrakenWebsocketAPI, Trade
+from trades.trade import Trade
 
 
 def run(kafka_broker_address: str, kafka_topic_name: str, kraken_api:Union[KrakenWebsocketAPI, KrakenRestAPI]):
@@ -47,8 +46,8 @@ if __name__ == '__main__':
         logger.info('Creating KrakenRest API object')
         api = KrakenRestAPI(product_id=config.product_id[0], lant_n_days=30)
     else:
-        raise ValueError(f"Invalid value for live_or_historical. Must be 'live' or 'historical")
-        
+        raise ValueError("Invalid value for live_or_historical. Must be 'live' or 'historical")
+
     run(
         # kafka_broker_address='localhost:31234',
         kafka_broker_address=config.kafka_broker_address,

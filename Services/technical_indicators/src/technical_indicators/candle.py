@@ -22,8 +22,7 @@ def are_same_window(candle:dict, previous_candle:dict) -> bool:
 def update_candles_in_state(candle: dict, state: State):
     """_summary_
     This function takes the candle current state (with the list N of previous candles) and the latest candle
-    and uppdates the list
-    
+    and uppdates the list of candles in the state.    
     it can either happen  that the latest candle corresponds to the same window as the last candle in the state
     or it can be a new candle that corresponds to a new window
 

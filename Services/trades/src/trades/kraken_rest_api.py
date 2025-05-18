@@ -1,16 +1,17 @@
 # from wsgiref import headers
-import trades
-from trades.trade import Trade
-import time 
+import json
+import time
+
 import requests
 from loguru import logger
-import json
+
+from trades.trade import Trade
 
 
 class KrakenRestAPI:
-    
+
     URL  = 'https://api.kraken.com/0/public/Trades'
-    
+
     def __init__(self,product_id:str,
                  lant_n_days:int):
         self.product_id = product_id
@@ -19,10 +20,10 @@ class KrakenRestAPI:
 
         #convert to nanosecodns
         self.since_timestamp_ns = int(
-            
+
             time.time_ns() - (lant_n_days * 24 * 60 * 60 * 1_000_000_000))
-        
-    
+
+
     def get_trades(self) -> list[Trade]:
         """sends a GET request to the Kraken API and returns a list of trades for given product_id 
         and since time given in timestamp in nanoseconds.
@@ -47,7 +48,7 @@ class KrakenRestAPI:
             logger.error("Waiting for 10 seconds before retrying...")
             time.sleep(10)
             return []
-        
+
         try:
             data = json.loads(response.text)
         except json.JSONDecodeError as e:
@@ -59,7 +60,7 @@ class KrakenRestAPI:
         except KeyError as e:
             logger.error(f"Faild to get trades for pairs {self.product_id}: {e}")
             return []
-        
+
         # transform the trades to Trade objects
         trades = [
             Trade.from_kraken_api_response(
@@ -70,11 +71,11 @@ class KrakenRestAPI:
             )
             for trade in trades
         ]
-        # breakpoint()  
-        
+        # breakpoint()
+
         #update the since timestamp to the last trade timestamp
         self.since_timestamp_ns = int(float(data['result']['last']))
-        
+
         #check stopping condition
         if self.since_timestamp_ns > int(time.time_ns()-1_000_000_000):
             # if the since timestamp is greater than the current time, stop the API call
@@ -83,10 +84,10 @@ class KrakenRestAPI:
             # this is a stopping condition
             # it would be better to make this source statful and recoverable
             # the container gets down and self restarts by kubernetes
-            # it can resume from where it left off  
+            # it can resume from where it left off
             self._is_done = True
         return trades
-    
+
     def is_done(self) -> bool:
         """returns True if the API call is done and no more trades are to be fetched"""
         return self._is_done
