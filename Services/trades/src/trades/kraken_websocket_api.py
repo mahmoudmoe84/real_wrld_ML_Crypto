@@ -59,10 +59,10 @@ class KrakenWebsocketAPI:
         #     )
         # using list comprehension
         trades = [
-            Trade(
+            Trade.from_kraken_websocket_response(
                 product_id=trade['symbol'],
-                price=float(trade['price']),
-                quantity=float(trade['qty']),
+                price=trade['price'],
+                quantity=trade['qty'],
                 timestamp=trade['timestamp'],
             )
             for trade in trade_data

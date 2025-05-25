@@ -27,12 +27,13 @@ members = [
     "Services/trades",
     "Services/candles",
     "Services/technical_indicators",
+
 ]
 
 [tool.uv.sources]
-trades = { workspace = true }
 candles = { workspace = true }
 technical-indicators = { workspace = true }
+trades = { workspace = true }
 
 [tool.ruff]
 line-length = 88

@@ -23,10 +23,14 @@ if [ "$env" != "dev" ] && [ "$env" != "prod" ]; then
 fi
 if [ "$env" == "dev" ]; then
     echo "Building image ${image_name} for dev"
+    export KUBECONFIG=$HOME/.kube/config-rwml-dev
+    echo "KUBECONFIG: $KUBECONFIG"
   	docker build -t ${image_name}:dev -f docker/${image_name}.dockerfile .
     kind load docker-image ${image_name}:dev --name rwml-34fa
 else
     echo "Building image for prod"
+    export KUBECONFIG=$HOME/.kube/rwml-production-test-kubeconfig.yaml
+    echo "KUBECONFIG: $KUBECONFIG"
     docker buildx build --platform \
     linux/arm64,linux/amd64 -t \
     ghcr.io/mahmoudmoe84/${image_name}:0.1.6-beta.$(shell date +%s) \
