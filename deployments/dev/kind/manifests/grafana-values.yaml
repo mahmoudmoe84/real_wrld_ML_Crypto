@@ -103,12 +103,9 @@ serviceMonitor:
 ingress:
   enabled: false
 
-# Change this section to enable persistence
+# FIXED: Enable persistence properly
 persistence:
   enabled: true  # Changed from false to true
-  # Remove the emptyDir type
-  # type: emptyDir
-  # Enable these settings for PVC
   storageClassName: standard
   accessModes:
     - ReadWriteOnce
@@ -117,20 +114,44 @@ persistence:
   annotations:
     "helm.sh/resource-policy": keep
 
-# Add an init container to fix permissions issues
-initContainers:
-  - name: init-chmod-data
-    image: busybox:1.34
-    command: ["sh", "-c", "mkdir -p /var/lib/grafana/data && chmod -R 777 /var/lib/grafana/data"]
-    volumeMounts:
-      - name: storage
-        mountPath: /var/lib/grafana/data
+# FIXED: Proper init container configuration for Grafana Helm chart
+initChownData:
+  enabled: true
+  ## If false, data ownership will not be reset at startup
+  ## This allows the grafana-server to be run with an arbitrary user
+  ##
+  ## If you are using an initContainer to change the GID or UID of an existing volume, set this to false
+  ## If you are using an initContainer to populate an empty dir as the volume, set this to false
+  ## Related issue: https://github.com/grafana/grafana-docker/issues/43
+  ##
+  image:
+    repository: busybox
+    tag: "1.34"
+    sha: ""
+    pullPolicy: IfNotPresent
+  ## initChownData resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: {}
+  securityContext:
+    runAsNonRoot: false
+    runAsUser: 0
+    securityContext:
+      runAsUser: 0
 
-# Add a lifecycle hook to clean up stale database locks
-lifecycle:
-  postStart:
-    exec:
-      command: ["/bin/sh", "-c", "find /var/lib/grafana/data -name '*.db-wal' -delete || true"]
+# FIXED: Proper security context configuration
+securityContext:
+  runAsNonRoot: false
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroup: 472
+
+podSecurityContext:
+  runAsNonRoot: false
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroup: 472
+  fsGroupChangePolicy: "OnRootMismatch"
 
 # Keep your existing resource limits
 resources:
@@ -141,37 +162,39 @@ resources:
     cpu: 100m
     memory: 128Mi
 
-# Extend your existing probe timeouts to give Grafana more time to recover
+# FIXED: Improved probe configuration
 readinessProbe:
   httpGet:
     path: /api/health
     port: 3000
-  initialDelaySeconds: 60  # Increased from 30
-  timeoutSeconds: 10       # Increased from 5
-  periodSeconds: 15        # Increased from 10
-  failureThreshold: 5      # Increased from 3
+  initialDelaySeconds: 10
+  timeoutSeconds: 30
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 3
 
 livenessProbe:
   httpGet:
     path: /api/health
     port: 3000
-  initialDelaySeconds: 90  # Increased from 60
-  timeoutSeconds: 10       # Increased from 5
-  periodSeconds: 15        # Increased from 10
-  failureThreshold: 5      # Increased from 3
+  initialDelaySeconds: 30
+  timeoutSeconds: 30
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 3
 
-# Add a startup probe to give more time for initial startup
 startupProbe:
   httpGet:
     path: /api/health
     port: 3000
-  initialDelaySeconds: 30
-  timeoutSeconds: 10
-  periodSeconds: 15
-  failureThreshold: 10
+  initialDelaySeconds: 10
+  timeoutSeconds: 30
+  periodSeconds: 5
+  successThreshold: 1
+  failureThreshold: 15
 
 # Extended grace period
-terminationGracePeriodSeconds: 60  # Increased from 30
+terminationGracePeriodSeconds: 60
 
 testFramework:
   enabled: false
