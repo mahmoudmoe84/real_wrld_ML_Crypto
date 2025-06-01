@@ -1,10 +1,27 @@
 from datetime import timedelta
+import time
 
 from loguru import logger
 from quixstreams import Application
 
 from candles.config import config
+from quixstreams import Application
+from quixstreams.models import TimestampType
+from typing import Any, Optional, List, Tuple
 
+
+
+def custom_ts_extractor(
+    value: Any,
+    headers: Optional[List[Tuple[str, bytes]]],
+    timestamp: float,
+    timestamp_type: TimestampType,
+) -> int:
+    """
+    Specifying a custom timestamp extractor to use the timestamp from the message payload 
+    instead of Kafka timestamp.
+    """
+    return value["timestamp_ms"]
 
 def init_candle(trade: dict) -> dict:
     """
@@ -71,7 +88,7 @@ def run(
     app = Application(broker_address=kafka_broker_address,
                       consumer_group=kafka_consumer_group)
     # input topic
-    trade_topic = app.topic(name=kafka_input_input_topic, value_deserializer='json')
+    trade_topic = app.topic(name=kafka_input_input_topic, value_deserializer='json',timestamp_extractor=custom_ts_extractor)
     # output topic
     candle_topic = app.topic(name=kafka_output_topic, value_serializer='json')
 
@@ -84,7 +101,7 @@ def run(
     # sdf = sdf.update(lambda message: logger.info(f'Input: {message}'))
 
     sdf = (
-        sdf.tumbling_window(timedelta(seconds=candles_seconds))
+        sdf.tumbling_window(timedelta(seconds=candles_seconds),grace_ms=86400000*30)
         .reduce(reducer=update_candle, initializer=init_candle)
     )
     # if emit_intermediate_candle:
